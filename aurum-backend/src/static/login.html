@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Aurum</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/styles/login.css">
+    <link rel="stylesheet" href="/styles/components.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1 class="login-logo">Aurum</h1>
+                <p class="login-subtitle">Sistema de Gestão</p>
+            </div>
+            
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username">Usuário</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Entrar</button>
+                
+                <div class="login-links">
+                    <a href="/" class="back-link">← Voltar ao site</a>
+                </div>
+            </form>
+            
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+            <div id="loadingMessage" class="loading-message" style="display: none;">Entrando...</div>
+        </div>
+    </div>
+
+    <!-- Dashboard Modal (hidden by default) -->
+    <div id="dashboardModal" class="modal" style="display: none;">
+        <div class="modal-content dashboard-modal">
+            <div class="dashboard-header">
+                <div class="dashboard-title">
+                    <h2>🏆 Aurum T.I. - Dashboard</h2>
+                </div>
+                <div class="dashboard-user">
+                    <span class="user-icon">👤</span>
+                    <span id="userProfile" class="user-name"></span>
+                    <span class="user-badge">administrador</span>
+                    <button id="logoutBtn" class="btn-logout">🚪</button>
+                </div>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="stats-container">
+                <div class="stat-card stat-total">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-content">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                </div>
+                <div class="stat-card stat-open">
+                    <div class="stat-icon">⚠️</div>
+                    <div class="stat-content">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Abertos</div>
+                    </div>
+                </div>
+                <div class="stat-card stat-progress">
+                    <div class="stat-icon">⏳</div>
+                    <div class="stat-content">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Em Andamento</div>
+                    </div>
+                </div>
+                <div class="stat-card stat-closed">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-content">
+                        <div class="stat-number">0</div>
+                        <div class="stat-label">Fechados</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="dashboard-content">
+                <!-- Section Header -->
+                <div class="section-header">
+                    <h3>Meus Chamados</h3>
+                    <div class="section-filters">
+                        <button class="filter-btn active">Todos</button>
+                        <button class="filter-btn">Abertos</button>
+                        <button class="filter-btn">Em Andamento</button>
+                    </div>
+                    <div class="section-actions">
+                        <button class="nav-btn" data-section="tickets">🎫 Chamados</button>
+                        <button class="nav-btn" data-section="users">👥 Usuários</button>
+                        <button class="nav-btn" data-section="clients">🏢 Clientes</button>
+                        <button class="nav-btn" data-section="services">⚙️ Serviços</button>
+                        <button id="newTicketBtn" class="btn-new">+ Novo Chamado</button>
+                    </div>
+                </div>
+                
+                <!-- Content Sections -->
+                <div class="content-area">
+                    <!-- Tickets Section -->
+                    <section id="ticketsSection" class="dashboard-section active">
+                        <div id="ticketsContainer" class="content-container">
+                            <div class="empty-state">
+                                <div class="empty-icon">🎫</div>
+                                <h3>Nenhum chamado encontrado</h3>
+                                <p>Clique em "Novo Chamado" para criar seu primeiro ticket</p>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Users Section -->
+                    <section id="usersSection" class="dashboard-section">
+                        <div class="section-header">
+                            <h3>Gerenciamento de Usuários</h3>
+                            <button id="newUserBtn" class="btn-new">+ Novo Usuário</button>
+                        </div>
+                        <div id="usersContainer" class="content-container">
+                            <!-- Users will be loaded here -->
+                        </div>
+                    </section>
+                    
+                    <!-- Clients Section -->
+                    <section id="clientsSection" class="dashboard-section">
+                        <div class="section-header">
+                            <h3>Gerenciamento de Clientes</h3>
+                            <button id="newClientBtn" class="btn-new">+ Novo Cliente</button>
+                        </div>
+                        <div id="clientsContainer" class="content-container">
+                            <!-- Clients will be loaded here -->
+                        </div>
+                    </section>
+                    
+                    <!-- Services Section -->
+                    <section id="servicesSection" class="dashboard-section">
+                        <div class="section-header">
+                            <h3>Tipos de Serviço</h3>
+                            <button id="newServiceBtn" class="btn-new">+ Novo Tipo de Serviço</button>
+                        </div>
+                        <div id="servicesContainer" class="content-container">
+                            <!-- Services will be loaded here -->
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create/Edit Forms Modal -->
+    <div id="formsModal" class="modal" style="display: none;">
+        <div class="modal-content form-modal">
+            <div class="modal-header">
+                <h3 id="formTitle">Criar Item</h3>
+                <button id="closeFormBtn" class="close-btn">&times;</button>
+            </div>
+            <div id="formContainer" class="form-container">
+                <!-- Dynamic forms will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="/scripts/login.js"></script>
+    <script src="/scripts/dashboard.js"></script>
+</body>
+</html>
+
