@@ -250,37 +250,65 @@ if (contactForm) {
 }
 
 // Client Carousel
-document.addEventListener('DOMContentLoaded', function() {
+function resizeImage(imgElement, maxWidth, maxHeight) {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    let width = imgElement.width;
+    let height = imgElement.height;
+
+    // Calculate new dimensions, maintaining aspect ratio
+    if (maxWidth && width > maxWidth) {
+        height = height * (maxWidth / width);
+        width = maxWidth;
+    }
+
+    if (maxHeight && height > maxHeight) {
+        width = width * (maxHeight / height);
+        height = maxHeight;
+    }
+
+    canvas.width = width;
+    canvas.height = height;
+
+    ctx.drawImage(imgElement, 0, 0, width, height);
+
+    // Return the resized image as a data URL (e.g., PNG)
+    return canvas.toDataURL("image/png");
+}
+
+// Client Carousel
+document.addEventListener("DOMContentLoaded", function() {
     const clients = [
         {
-            name: 'Best Guest Hotel',
-            message: 'A Aurum transformou nossa infraestrutura de TI completamente. Agora temos sistemas mais eficientes e seguros que nos permitem focar no crescimento do negócio.',
-            image: '/assets/bestguest.jpeg' // Imagem padrão
+            name: 'BEST GUEST HOTEL',
+            //message: 'A Aurum transformou nossa infraestrutura de TI completamente. Agora temos sistemas mais eficientes e seguros que nos permitem focar no crescimento do negócio.',
+            image: '/assets/bestguest.png' // Imagem padrão
         },
         {
-            name: 'FsMax Systems',
-            message: 'Excelente parceria! A consultoria em segurança da informação da Aurum nos ajudou a implementar protocolos robustos que protegem nossos dados críticos.',
+            name: 'FSMAX SYSTEMS',
+            //message: 'Excelente parceria! A consultoria em segurança da informação da Aurum nos ajudou a implementar protocolos robustos que protegem nossos dados críticos.',
             image: '/assets/fsmax.jpeg'
         },
         {
-            name: 'Moreira Filho Advogados',
-            message: 'O desenvolvimento de software personalizado superou nossas expectativas. A equipe da Aurum entendeu perfeitamente nossas necessidades e entregou uma solução excepcional.',
+            name: 'MOREIRA FILHO ADVOGADOS',
+            //message: 'O desenvolvimento de software personalizado superou nossas expectativas. A equipe da Aurum entendeu perfeitamente nossas necessidades e entregou uma solução excepcional.',
             image: '/assets/moreirafilho.jpeg'
         },
         {
             name: 'ED.HYDE PARK',
-            message: 'Desde que começamos a trabalhar com a Aurum, nossa produtividade aumentou 40%. As soluções integradas realmente fazem a diferença no dia a dia.',
-            image: '/assets/clients_section-CiY21EiB.png'
+            //message: 'Desde que começamos a trabalhar com a Aurum, nossa produtividade aumentou 40%. As soluções integradas realmente fazem a diferença no dia a dia.',
+            image: '/assets/edhyde.png'
         },
         {
-            name: 'SP Centro',
-            message: 'Profissionalismo e qualidade técnica excepcionais. A Aurum não apenas resolve problemas, mas antecipa necessidades futuras do nosso negócio.',
+            name: 'SP CENTRO',
+            //message: 'Profissionalismo e qualidade técnica excepcionais. A Aurum não apenas resolve problemas, mas antecipa necessidades futuras do nosso negócio.',
             image: '/assets/spcentro.png'
         },
         {
             name: 'NOVAES & ROSELLI ADVOGADOS',
-            message: 'Profissionalismo e qualidade técnica excepcionais. A Aurum não apenas resolve problemas, mas antecipa necessidades futuras do nosso negócio.',
-            image: '/assets/novaesroselli.jpeg'
+            //message: 'Profissionalismo e qualidade técnica excepcionais. A Aurum não apenas resolve problemas, mas antecipa necessidades futuras do nosso negócio.',
+            image: '/assets/novaesroselli.jpeg' 
         },
 
     ];
@@ -300,19 +328,35 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentClient = clients[currentIndex];
             clientNameElement.textContent = currentClient.name;
             clientMessageElement.textContent = currentClient.message;
-            clientImageElement.src = currentClient.image;
             
-            // Add fade in effect
-            clientsTextElement.style.opacity = '1';
-            clientImageElement.style.opacity = '1';
-            clientsTextElement.classList.add('client-fade-in');
-            clientImageElement.classList.add('client-fade-in');
-            
-            // Remove animation class after animation completes
-            setTimeout(() => {
-                clientsTextElement.classList.remove('client-fade-in');
-                clientImageElement.classList.remove('client-fade-in');
-            }, 500);
+            // Create a temporary image element to load the image and then resize it
+            const tempImage = new Image();
+            tempImage.src = currentClient.image;
+
+            tempImage.onload = () => {
+                // Define as dimensões desejadas para a sua logo (ex: 150px de largura, altura automática)
+                const resizedDataURL = resizeImage(tempImage, 200, null); 
+                clientImageElement.src = resizedDataURL;
+                clientImageElement.style.width = '300px'; // Opcional: defina o estilo CSS para garantir o tamanho
+                clientImageElement.style.height = '200px'; // Opcional: defina o estilo CSS para garantir o tamanho
+
+                // Add fade in effect after image is loaded and resized
+                clientsTextElement.style.opacity = '1';
+                clientImageElement.style.opacity = '1';
+                clientsTextElement.classList.add('client-fade-in');
+                clientImageElement.classList.add('client-fade-in');
+                
+                // Remove animation class after animation completes
+                setTimeout(() => {
+                    clientsTextElement.classList.remove('client-fade-in');
+                    clientImageElement.classList.remove('client-fade-in');
+                }, 500);
+            };
+
+            // If image is already in cache, onload might not fire, so check complete property
+            if (tempImage.complete) {
+                tempImage.onload();
+            }
             
             currentIndex = (currentIndex + 1) % clients.length;
         }, 250);

@@ -746,8 +746,8 @@ html {
 .form-modal {
     width: 600px;
     max-width: 90vw;
-    background: #1a1a2e;
-    color: #ffffff;
+    background: #383861;
+    color: #000000;
 }
 
 .form-container {
