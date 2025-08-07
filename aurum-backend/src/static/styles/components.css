@@ -716,21 +716,21 @@ html {
 }
 
 .btn-primary {
-    background: #7c3aed;
+    background: #2563EB;
     color: white;
 }
 
 .btn-primary:hover {
-    background: #6d28d9;
+    background: #000000e0;
 }
 
 .btn-secondary {
-    background: #6b7280;
-    color: white;
+    background: #2564eb00;
+    color: #2563EB;
 }
 
 .btn-secondary:hover {
-    background: #4b5563;
+    background: #0dff005e;
 }
 
 .btn-danger {
@@ -772,7 +772,7 @@ html {
     padding: 12px;
     border: 1px solid #3a3a5a;
     border-radius: 6px;
-    background: #ffffff;
+    background: #E5E7EB;
     color: #000000;
     font-size: 14px;
     box-sizing: border-box;

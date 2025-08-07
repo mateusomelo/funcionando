@@ -133,7 +133,7 @@ function displayTickets(tickets) {
     if (!tickets || tickets.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
-                <div class="empty-icon">🎫</div>
+                <div class="empty-icon">-></div>
                 <h3>Nenhum chamado encontrado</h3>
                 <p>Clique em "Novo Chamado" para criar seu primeiro ticket</p>
             </div>

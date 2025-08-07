@@ -16,6 +16,7 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+    color: #F3F4F6;
 }
 
 /* Header Styles */
@@ -29,6 +30,7 @@ body {
 }
 
 .navbar {
+    background-color: #F8FAFC;
     padding: 1rem 0;
 }
 
@@ -42,7 +44,7 @@ body {
 }
 
 .nav-logo h1 {
-    color: #2563eb;
+    color: #2563EB;
     font-size: 2rem;
     font-weight: bold;
 }
@@ -56,17 +58,17 @@ body {
 
 .nav-link {
     text-decoration: none;
-    color: #333;
+    color: #111827;
     font-weight: 500;
     transition: color 0.3s ease;
 }
 
 .nav-link:hover {
-    color: #2563eb;
+    color: #2563EB;
 }
 
 .login-btn {
-    background: #2563eb;
+    background: #2563EB;
     color: white !important;
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
@@ -94,7 +96,7 @@ body {
 /* Hero Section */
 .hero {
     padding: 120px 0 80px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #F8FAFC 0%, #F8FAFC 100%);
     color: white;
 }
 
@@ -113,12 +115,14 @@ body {
     font-weight: bold;
     margin-bottom: 1rem;
     line-height: 1.2;
+    color: #111827;
 }
 
 .hero-subtitle {
     font-size: 1.25rem;
     margin-bottom: 2rem;
     opacity: 0.9;
+    color: #6B7280;
 }
 
 .hero-buttons {
@@ -164,7 +168,7 @@ body {
 
 .btn-secondary:hover {
     background: white;
-    color: #2563eb;
+    color: #000000;
 }
 
 /* Sections */
@@ -176,12 +180,12 @@ body {
     font-size: 2.5rem;
     text-align: center;
     margin-bottom: 3rem;
-    color: #1f2937;
+    color: #111827;
 }
 
 /* Services Section */
 .services {
-    background: #f8fafc;
+    background: #F8FAFC;
 }
 
 .services-grid {
@@ -234,7 +238,7 @@ body {
 
 .about-text p {
     margin-bottom: 1.5rem;
-    color: #6b7280;
+    color: #6B7280;
     font-size: 1.1rem;
 }
 
@@ -317,7 +321,7 @@ body {
 }
 
 .contact-item svg {
-    color: #2563eb;
+    color: #2563EB;
 }
 
 .contact-form {
@@ -355,7 +359,7 @@ body {
 
 /* Footer */
 .footer {
-    background: #1f2937;
+    background: #171731;
     color: white;
     padding: 3rem 0 1rem;
 }
@@ -382,7 +386,7 @@ body {
 }
 
 .footer-section ul li a {
-    color: #d1d5db;
+    color: #60A5FA;
     text-decoration: none;
     transition: color 0.3s ease;
 }
@@ -509,4 +513,263 @@ body {
     transition: opacity 0.5s ease-in-out;
 }
 
+
+/* Carousel Styles */
+.carousel-container {
+    position: relative;
+    max-width: 100%;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.carousel-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+}
+/*posicao do carousel dos nossos clientes*/
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    gap: 1.5rem;
+}
+
+/* Service Card Styles for Carousel */
+.carousel-track .service-card {
+    flex: 0 0 calc(33.333% - 1.333rem); /* 3 items on desktop */
+    background: #1E1E3F;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.carousel-track .service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.carousel-track .service-icon {
+    color: #2563eb;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+}
+
+.carousel-track .service-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #F9FAFB;
+    font-weight: 600;
+}
+
+.carousel-track .service-card p {
+    color: #D1D5DB;
+    line-height: 1.6;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+}
+
+/* Navigation Buttons */
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(37, 100, 235, 0.493);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.carousel-btn:hover {
+    background: rgba(29, 79, 216, 0.462);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+.carousel-btn:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.carousel-btn-prev {
+    left: -20px;
+}
+
+.carousel-btn-next {
+    right: -20px;
+}
+
+/* Indicators */
+.carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+}
+
+.carousel-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #d1d5db;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.carousel-indicator.active {
+    background: #2563eb;
+    transform: scale(1.2);
+}
+
+.carousel-indicator:hover {
+    background: #6b7280;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .carousel-track .service-card {
+        flex: 0 0 calc(50% - 1rem); /* 2 items on tablet */
+    }
+    
+    .carousel-btn-prev {
+        left: -20px;
+    }
+    
+    .carousel-btn-next {
+        right: -20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .carousel-track .service-card {
+        flex: 0 0 100%; /* 1 item on mobile */
+        margin: 0;
+    }
+    
+    .carousel-track {
+        gap: 0;
+    }
+    
+    .carousel-btn {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .carousel-btn-prev {
+        left: -10px;
+    }
+    
+    .carousel-btn-next {
+        right: -10px;
+    }
+    
+    .carousel-track .service-card {
+        min-height: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    .carousel-btn-prev {
+        left: 10px;
+    }
+    
+    .carousel-btn-next {
+        right: 10px;
+    }
+    
+    .carousel-btn {
+        width: 35px;
+        height: 35px;
+        background: rgba(37, 99, 235, 0.8);
+    }
+    
+    .carousel-track .service-card {
+        padding: 1.5rem;
+        min-height: 220px;
+    }
+    
+    .carousel-track .service-card h3 {
+        font-size: 1.25rem;
+    }
+    
+    .carousel-track .service-card p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Animation for auto-slide */
+@keyframes slideAnimation {
+    0% { opacity: 0.8; }
+    50% { opacity: 1; }
+    100% { opacity: 0.8; }
+}
+
+.carousel-track.auto-sliding {
+    animation: slideAnimation 0.5s ease-in-out;
+}
+
+/* Pause animation on hover */
+.carousel-container:hover .carousel-track {
+    animation-play-state: paused;
+}
+
+/* Smooth transitions */
+.carousel-track .service-card {
+    will-change: transform;
+}
+
+.carousel-btn {
+    will-change: transform, background-color;
+}
+
+/* Focus styles for accessibility */
+.carousel-btn:focus {
+    outline: 2px solid #2564eb7f;
+    outline-offset: 2px;
+}
+
+.carousel-indicator:focus {
+    outline: 2px solid #2564eb7f;
+    outline-offset: 2px;
+}
+
+/* Loading state */
+.carousel-container.loading .carousel-track {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+    .carousel-btn {
+        opacity: 0.8;
+    }
+    
+    .carousel-btn:hover {
+        transform: translateY(-50%);
+        background: rgba(37, 99, 235, 0.9);
+    }
+    
+    .carousel-track .service-card:hover {
+        transform: none;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+}
 
