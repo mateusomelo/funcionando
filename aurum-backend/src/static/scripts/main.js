@@ -372,3 +372,264 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 
+// Hero Carousel Functionality
+let currentHeroSlideIndex = 0;
+let heroAutoPlayInterval;
+const heroSlides = document.querySelectorAll('.hero-slide');
+const heroIndicators = document.querySelectorAll('.hero-indicator');
+const heroThumbnails = document.querySelectorAll('.hero-thumbnail');
+const totalHeroSlides = heroSlides.length;
+
+// Inicializar carrossel do Hero quando o DOM estiver carregado
+document.addEventListener('DOMContentLoaded', function() {
+    if (heroSlides.length > 0) {
+        initHeroCarousel();
+        startHeroAutoPlay();
+    }
+});
+
+function initHeroCarousel() {
+    // Configurar slide inicial
+    updateHeroCarousel();
+    
+    // Adicionar event listeners para pausar/retomar auto-play
+    const heroContainer = document.querySelector('.hero-container');
+    if (heroContainer) {
+        heroContainer.addEventListener('mouseenter', stopHeroAutoPlay);
+        heroContainer.addEventListener('mouseleave', startHeroAutoPlay);
+    }
+    
+    // Adicionar suporte para navegação por teclado
+    document.addEventListener('keydown', function(e) {
+        // Só funcionar se estivermos na seção hero
+        const heroSection = document.querySelector('.hero');
+        const rect = heroSection.getBoundingClientRect();
+        const isHeroVisible = rect.top < window.innerHeight && rect.bottom > 0;
+        
+        if (isHeroVisible) {
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                changeHeroSlide(-1);
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                changeHeroSlide(1);
+            }
+        }
+    });
+    
+    // Adicionar suporte para touch/swipe em dispositivos móveis
+    let startX = 0;
+    let endX = 0;
+    
+    if (heroContainer) {
+        heroContainer.addEventListener('touchstart', function(e) {
+            startX = e.touches[0].clientX;
+        });
+        
+        heroContainer.addEventListener('touchend', function(e) {
+            endX = e.changedTouches[0].clientX;
+            handleHeroSwipe();
+        });
+    }
+    
+    function handleHeroSwipe() {
+        const threshold = 50; // Mínimo de pixels para considerar um swipe
+        const diff = startX - endX;
+        
+        if (Math.abs(diff) > threshold) {
+            if (diff > 0) {
+                changeHeroSlide(1); // Swipe para a esquerda - próximo slide
+            } else {
+                changeHeroSlide(-1); // Swipe para a direita - slide anterior
+            }
+        }
+    }
+}
+
+function changeHeroSlide(direction) {
+    currentHeroSlideIndex += direction;
+    
+    if (currentHeroSlideIndex >= totalHeroSlides) {
+        currentHeroSlideIndex = 0;
+    } else if (currentHeroSlideIndex < 0) {
+        currentHeroSlideIndex = totalHeroSlides - 1;
+    }
+    
+    updateHeroCarousel();
+}
+
+function goToHeroSlide(index) {
+    currentHeroSlideIndex = index;
+    updateHeroCarousel();
+}
+
+function updateHeroCarousel() {
+    // Atualizar slides
+    heroSlides.forEach((slide, index) => {
+        slide.classList.remove('active');
+        if (index === currentHeroSlideIndex) {
+            slide.classList.add('active');
+        }
+    });
+    
+    // Atualizar indicadores
+    heroIndicators.forEach((indicator, index) => {
+        indicator.classList.remove('active');
+        if (index === currentHeroSlideIndex) {
+            indicator.classList.add('active');
+        }
+    });
+    
+    // Atualizar miniaturas
+    heroThumbnails.forEach((thumbnail, index) => {
+        thumbnail.classList.remove('active');
+        if (index === currentHeroSlideIndex) {
+            thumbnail.classList.add('active');
+        }
+    });
+    
+    // Adicionar animação aos elementos do slide ativo
+    const activeSlide = heroSlides[currentHeroSlideIndex];
+    if (activeSlide) {
+        const heroContent = activeSlide.querySelector('.hero-content');
+        const heroImage = activeSlide.querySelector('.hero-image');
+        
+        if (heroContent) {
+            heroContent.style.animation = 'none';
+            heroContent.offsetHeight; // Trigger reflow
+            heroContent.style.animation = 'slideInLeft 0.8s ease-out';
+        }
+        
+        if (heroImage) {
+            heroImage.style.animation = 'none';
+            heroImage.offsetHeight; // Trigger reflow
+            heroImage.style.animation = 'slideInRight 0.8s ease-out';
+        }
+    }
+    
+    // Atualizar título da página baseado no slide atual
+    updatePageTitle();
+}
+
+function updatePageTitle() {
+    const activeSlide = heroSlides[currentHeroSlideIndex];
+    if (activeSlide) {
+        const title = activeSlide.querySelector('.hero-title').textContent;
+        const subtitle = activeSlide.querySelector('.hero-subtitle').textContent;
+        document.title = `${title} - ${subtitle} | Aurum`;
+    }
+}
+
+function startHeroAutoPlay() {
+    stopHeroAutoPlay(); // Limpar qualquer interval existente
+    heroAutoPlayInterval = setInterval(() => {
+        changeHeroSlide(1);
+    }, 6000); // Muda slide a cada 6 segundos (um pouco mais lento para o hero)
+}
+
+function stopHeroAutoPlay() {
+    if (heroAutoPlayInterval) {
+        clearInterval(heroAutoPlayInterval);
+        heroAutoPlayInterval = null;
+    }
+}
+
+// Pausar auto-play quando a aba não estiver visível
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        stopHeroAutoPlay();
+    } else {
+        startHeroAutoPlay();
+    }
+});
+
+// Pausar auto-play quando o usuário rolar para fora da seção hero
+function handleHeroScroll() {
+    const heroSection = document.querySelector('.hero');
+    if (heroSection) {
+        const rect = heroSection.getBoundingClientRect();
+        const isHeroVisible = rect.top < window.innerHeight && rect.bottom > 0;
+        
+        if (!isHeroVisible && heroAutoPlayInterval) {
+            stopHeroAutoPlay();
+        } else if (isHeroVisible && !heroAutoPlayInterval) {
+            startHeroAutoPlay();
+        }
+    }
+}
+
+// Adicionar listener para scroll
+window.addEventListener('scroll', handleHeroScroll);
+
+// Função para precarregar imagens
+function preloadHeroImages() {
+    const images = document.querySelectorAll('.hero-slide img');
+    images.forEach(img => {
+        const imageUrl = img.src;
+        const preloadImg = new Image();
+        preloadImg.src = imageUrl;
+    });
+}
+
+// Chamar preload quando necessário
+document.addEventListener('DOMContentLoaded', preloadHeroImages);
+
+// Função para adicionar efeito de parallax sutil (opcional)
+function addHeroParallax() {
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const heroSection = document.querySelector('.hero');
+        
+        if (heroSection) {
+            const rect = heroSection.getBoundingClientRect();
+            const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+            
+            if (isVisible) {
+                const parallaxElements = heroSection.querySelectorAll('.hero-image img');
+                parallaxElements.forEach(element => {
+                    const speed = 0.2; // Efeito sutil
+                    element.style.transform = `translateY(${scrolled * speed}px)`;
+                });
+            }
+        }
+    });
+}
+
+// Ativar parallax (opcional - descomente se desejar)
+// addHeroParallax();
+
+// Função para otimizar performance em dispositivos móveis
+function optimizeForMobile() {
+    const isMobile = window.innerWidth <= 768;
+    
+    if (isMobile) {
+        // Reduzir frequência de auto-play em mobile
+        if (heroAutoPlayInterval) {
+            stopHeroAutoPlay();
+            heroAutoPlayInterval = setInterval(() => {
+                changeHeroSlide(1);
+            }, 8000); // 8 segundos em mobile
+        }
+    }
+}
+
+// Chamar otimização quando a janela for redimensionada
+window.addEventListener('resize', optimizeForMobile);
+document.addEventListener('DOMContentLoaded', optimizeForMobile);
+
+// Adicionar indicador de carregamento para as imagens
+function addImageLoadingIndicators() {
+    const images = document.querySelectorAll('.hero-slide img');
+    
+    images.forEach(img => {
+        if (!img.complete) {
+            img.style.opacity = '0';
+            img.addEventListener('load', function() {
+                this.style.transition = 'opacity 0.3s ease';
+                this.style.opacity = '1';
+            });
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', addImageLoadingIndicators);
