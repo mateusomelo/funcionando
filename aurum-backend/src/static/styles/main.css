@@ -152,9 +152,9 @@ body {
 /* Controles de Navegação do Hero */
 .hero-carousel-nav {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(37, 99, 235, 0.8);
+    top: 70%;
+    transform: translateY(-25%);
+    background: rgba(37, 99, 235, 0.5);
     border: none;
     color: white;
     width: 50px;
@@ -170,17 +170,17 @@ body {
 }
 
 .hero-carousel-nav:hover {
-    background: rgba(37, 99, 235, 1);
+    background: rgba(37, 99, 235, 0,5);
     transform: translateY(-50%) scale(1.1);
-    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4);
+    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.5);
 }
 
 .hero-carousel-prev {
-    left: 20px;
+    left: 10px;
 }
 
 .hero-carousel-next {
-    right: 20px;
+    right: 10px;
 }
 
 /* Indicadores do Hero */
@@ -386,7 +386,11 @@ body {
 .hero-slide .btn:hover {
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
-
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
 
 /* Button Styles */
 .btn {
@@ -1023,4 +1027,3 @@ body {
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
 }
-

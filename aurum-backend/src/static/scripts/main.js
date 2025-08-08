@@ -524,7 +524,7 @@ function startHeroAutoPlay() {
     stopHeroAutoPlay(); // Limpar qualquer interval existente
     heroAutoPlayInterval = setInterval(() => {
         changeHeroSlide(1);
-    }, 6000); // Muda slide a cada 6 segundos (um pouco mais lento para o hero)
+    }, 4000); // Muda slide a cada 6 segundos (um pouco mais lento para o hero)
 }
 
 function stopHeroAutoPlay() {
