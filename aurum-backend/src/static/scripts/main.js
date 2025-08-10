@@ -197,57 +197,11 @@ document.head.appendChild(style);
 
 
 
-// Hamburger menu functionality
-const hamburger = document.querySelector('.hamburger');
-const navMenu = document.querySelector('.nav-menu');
+// Hamburger menu functionality - já definido no DOMContentLoaded acima
 
-if (hamburger && navMenu) {
-    hamburger.addEventListener('click', () => {
-        hamburger.classList.toggle('active');
-        navMenu.classList.toggle('active');
-    });
+// Smooth scrolling for navigation links - já definido no DOMContentLoaded acima
 
-    // Close menu when clicking on a link
-    document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', () => {
-        hamburger.classList.remove('active');
-        navMenu.classList.remove('active');
-    }));
-}
-
-// Smooth scrolling for navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
-});
-
-// Contact form handling
-const contactForm = document.getElementById('contactForm');
-if (contactForm) {
-    contactForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Get form data
-        const formData = new FormData(this);
-        const data = Object.fromEntries(formData);
-        
-        // Here you would typically send the data to your backend
-        console.log('Form submitted:', data);
-        
-        // Show success message (you can customize this)
-        alert('Mensagem enviada com sucesso! Entraremos em contato em breve.');
-        
-        // Reset form
-        this.reset();
-    });
-}
+// Contact form handling - já definido no DOMContentLoaded acima
 
 // Client Carousel
 function resizeImage(imgElement, maxWidth, maxHeight) {
@@ -524,7 +478,7 @@ function startHeroAutoPlay() {
     stopHeroAutoPlay(); // Limpar qualquer interval existente
     heroAutoPlayInterval = setInterval(() => {
         changeHeroSlide(1);
-    }, 4000); // Muda slide a cada 6 segundos (um pouco mais lento para o hero)
+    }, 4000); // Muda slide a cada 4 segundos
 }
 
 function stopHeroAutoPlay() {
