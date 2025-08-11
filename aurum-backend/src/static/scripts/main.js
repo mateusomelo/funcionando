@@ -633,3 +633,4 @@ function addImageLoadingIndicators() {
 }
 
 document.addEventListener('DOMContentLoaded', addImageLoadingIndicators);
+teste
