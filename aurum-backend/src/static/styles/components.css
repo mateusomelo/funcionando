@@ -725,8 +725,8 @@ html {
 }
 
 .btn-secondary {
-    background: #2564eb00;
-    color: #2563EB;
+    background: #2564eb4d;
+    color: #000000;
 }
 
 .btn-secondary:hover {
