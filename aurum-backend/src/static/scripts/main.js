@@ -86,7 +86,7 @@ function startHeroAutoPlay() {
     stopHeroAutoPlay(); // Limpar qualquer interval existente
     heroAutoPlayInterval = setInterval(() => {
         changeHeroSlide(1);
-    }, 1500); // Troca a cada 1.5 segundos
+    }, 3000); // Troca a cada 1.5 segundos
 }
 
 function stopHeroAutoPlay() {
@@ -166,31 +166,13 @@ document.addEventListener("DOMContentLoaded", function() {
             submitBtn.textContent = "Enviando...";
             submitBtn.disabled = true;
             
-            // Send data to backend API
-            fetch('/api/contact', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    showMessage(result.message, "success");
-                    contactForm.reset();
-                } else {
-                    showMessage(result.error || "Erro ao enviar mensagem. Tente novamente.", "error");
-                }
-            })
-            .catch(error => {
-                console.error('Erro:', error);
-                showMessage("Erro ao enviar mensagem. Verifique sua conexão e tente novamente.", "error");
-            })
-            .finally(() => {
+            // Simulate form submission (replace with actual API call)
+            setTimeout(() => {
+                showMessage("Mensagem enviada com sucesso! Entraremos em contato em breve.", "success");
+                contactForm.reset();
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
-            });
+            }, 2000);
         });
     }
     
@@ -520,7 +502,7 @@ document.addEventListener("DOMContentLoaded", function() {
         updateClientInfo();
         
         // Auto-advance every 4 seconds
-        setInterval(nextClient, 4000);
+        setInterval(nextClient, 3000);
         
         // Add click handlers for navigation (if you have prev/next buttons)
         const prevClientBtn = document.getElementById("prevClient");

@@ -10,12 +10,15 @@ from src.models.client import Client
 from src.models.service_type import ServiceType
 from src.models.ticket import Ticket
 from src.models.ticket_response import TicketResponse
+from src.models.email_config import EmailConfig
 from src.routes.user import user_bp
 from src.routes.auth import auth_bp
 from src.routes.tickets import tickets_bp
 from src.routes.users import users_bp
 from src.routes.clients import clients_bp
 from src.routes.service_types import service_types_bp
+from src.routes.contact import contact_bp, mail
+from src.routes.email_config import email_config_bp
 
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 app.config['SECRET_KEY'] = 'asdf#FGSgvasgf$5$WGT'
@@ -26,12 +29,17 @@ CORS(app, supports_credentials=True)
 # Inicializa o bcrypt
 bcrypt.init_app(app)
 
+# Inicializa o Flask-Mail
+mail.init_app(app)
+
 app.register_blueprint(user_bp, url_prefix='/api')
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(tickets_bp, url_prefix='/api')
 app.register_blueprint(users_bp, url_prefix='/api')
 app.register_blueprint(clients_bp, url_prefix='/api')
 app.register_blueprint(service_types_bp, url_prefix='/api')
+app.register_blueprint(contact_bp, url_prefix='/api')
+app.register_blueprint(email_config_bp, url_prefix='/api')
 
 # uncomment if you need to use database
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(os.path.dirname(__file__), 'database', 'app.db')}"
@@ -102,3 +110,4 @@ def serve(path):
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8289, debug=True)
+
