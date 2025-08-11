@@ -587,4 +587,13 @@ function addImageLoadingIndicators() {
 }
 
 document.addEventListener('DOMContentLoaded', addImageLoadingIndicators);
-teste
+
+// Ajustar variável CSS da altura do header para o Hero ocupar a tela inteira sem sobreposição
+function updateHeaderHeightVar() {
+    const header = document.querySelector('.header');
+    const headerHeight = header ? header.offsetHeight : 0;
+    document.documentElement.style.setProperty('--app-header-height', headerHeight + 'px');
+}
+
+document.addEventListener('DOMContentLoaded', updateHeaderHeightVar);
+window.addEventListener('resize', updateHeaderHeightVar);
