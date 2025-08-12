@@ -16,7 +16,6 @@ from src.routes.tickets import tickets_bp
 from src.routes.users import users_bp
 from src.routes.clients import clients_bp
 from src.routes.service_types import service_types_bp
-from src.routes.contact import contact_bp
 
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 app.config['SECRET_KEY'] = 'asdf#FGSgvasgf$5$WGT'
@@ -33,7 +32,6 @@ app.register_blueprint(tickets_bp, url_prefix='/api')
 app.register_blueprint(users_bp, url_prefix='/api')
 app.register_blueprint(clients_bp, url_prefix='/api')
 app.register_blueprint(service_types_bp, url_prefix='/api')
-app.register_blueprint(contact_bp, url_prefix='/api')
 
 # uncomment if you need to use database
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(os.path.dirname(__file__), 'database', 'app.db')}"
