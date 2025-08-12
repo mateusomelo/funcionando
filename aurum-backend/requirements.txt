@@ -6,4 +6,3 @@ python-dotenv==1.0.0
 Werkzeug==2.3.7
 Flask-CORS==4.0.0
 flask_bcrypt==1.0.1
-Flask-Mail==0.10.0
