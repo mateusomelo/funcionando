@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/home/ubuntu/aurum-sistema-completo/home/ubuntu/aurum-project/funcionando/aurum-backend/venv"
+VIRTUAL_ENV="/project/sandbox/user-workspace/aurum-backend/venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

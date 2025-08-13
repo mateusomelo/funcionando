@@ -1,4 +1,4 @@
-#!/home/ubuntu/aurum-sistema-completo/home/ubuntu/aurum-project/funcionando/aurum-backend/venv/bin/python3.11
+#!/project/sandbox/user-workspace/aurum-backend/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys

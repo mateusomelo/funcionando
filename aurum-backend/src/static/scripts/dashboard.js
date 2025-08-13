@@ -195,6 +195,8 @@ function displayUsers(users) {
         <div class="user-card" data-user-id="${user.id}">
             <div class="user-info">
                 <h4>${user.username}</h4>
+                <p><strong>Email:</strong> ${user.email}</p>
+                <p><strong>Cliente:</strong> ${user.client_name || "Nenhum"}</p>
                 <span class="user-profile profile-${user.profile}">${getProfileLabel(user.profile)}</span>
             </div>
             <div class="user-actions">
@@ -422,24 +424,34 @@ async function createUser() {
     const form = await loadForm("/forms/user_form.html", "Criar Novo Usuário");
     if (!form) return;
 
+    // Carregar clientes para o dropdown
+    await populateClientDropdownForUser(form.querySelector("#client_id"));
+
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const formData = new FormData(form);
         const userData = Object.fromEntries(formData.entries());
 
+        // Converter client_id para inteiro se fornecido
+        if (userData.client_id) {
+            userData.client_id = parseInt(userData.client_id);
+        } else {
+            userData.client_id = null;
+        }
+
         try {
             const response = await apiRequest("/api/users", { method: "POST", body: JSON.stringify(userData) });
             if (response.ok) {
-                window.showSuccess("Usuário criado com sucesso!");
+                showSuccess("Usuário criado com sucesso!");
                 hideFormModal();
                 loadUsers();
             } else {
                 const errorData = await response.json();
-                window.showError(errorData.error || "Erro ao criar usuário.");
+                showError(errorData.error || "Erro ao criar usuário.");
             }
         } catch (error) {
             console.error("Error creating user:", error);
-            window.showError("Erro de conexão ao criar usuário.");
+            showError("Erro de conexão ao criar usuário.");
         }
     });
 }
@@ -453,29 +465,39 @@ async function editUser(userId) {
         const form = await loadForm("/forms/user_form.html", "Editar Usuário", userData);
         if (!form) return;
 
+        // Carregar clientes para o dropdown e definir o valor selecionado
+        await populateClientDropdownForUser(form.querySelector("#client_id"), userData.client_id);
+
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
             const formData = new FormData(form);
             const updatedUserData = Object.fromEntries(formData.entries());
 
+            // Converter client_id para inteiro se fornecido
+            if (updatedUserData.client_id) {
+                updatedUserData.client_id = parseInt(updatedUserData.client_id);
+            } else {
+                updatedUserData.client_id = null;
+            }
+
             try {
                 const updateResponse = await apiRequest(`/api/users/${userId}`, { method: "PUT", body: JSON.stringify(updatedUserData) });
                 if (updateResponse.ok) {
-                window.showSuccess("Usuário atualizado com sucesso!");
+                    showSuccess("Usuário atualizado com sucesso!");
                     hideFormModal();
                     loadUsers();
                 } else {
                     const errorData = await updateResponse.json();
-                    window.showError(errorData.error || "Erro ao atualizar usuário.");
+                    showError(errorData.error || "Erro ao atualizar usuário.");
                 }
             } catch (error) {
                 console.error("Error updating user:", error);
-                window.showError("Erro de conexão ao atualizar usuário.");
+                showError("Erro de conexão ao atualizar usuário.");
             }
         });
     } catch (error) {
         console.error("Error fetching user for edit:", error);
-        window.showError(error.message || "Erro ao carregar dados do usuário para edição.");
+        showError(error.message || "Erro ao carregar dados do usuário para edição.");
     }
 }
 
@@ -850,6 +872,24 @@ async function populateServiceTypeDropdown(selectElement, selectedId = null) {
     } catch (error) {
         console.error("Error populating service types:", error);
         showError("Erro ao carregar tipos de serviço para o formulário.");
+    }
+}
+
+// Helper to populate client dropdown for user forms
+async function populateClientDropdownForUser(selectElement, selectedId = null) {
+    try {
+        const response = await apiRequest("/api/clients");
+        if (response.ok) {
+            const clients = await response.json();
+            selectElement.innerHTML = '<option value="">Nenhum cliente</option>' +
+                clients.map(client => `<option value="${client.id}">${client.name}</option>`).join("");
+            if (selectedId) {
+                selectElement.value = selectedId;
+            }
+        }
+    } catch (error) {
+        console.error("Error populating clients for user form:", error);
+        showError("Erro ao carregar clientes para o formulário.");
     }
 }
 

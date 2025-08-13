@@ -25,6 +25,9 @@ def create_user():
         data = request.get_json()
         
         # Validações
+        if not data.get('email'):
+            return jsonify({'error': 'Email é obrigatório'}), 400
+        
         if not data.get('username'):
             return jsonify({'error': 'Nome de usuário é obrigatório'}), 400
         
@@ -34,16 +37,22 @@ def create_user():
         if not data.get('profile') or data.get('profile') not in ['administrador', 'tecnico', 'usuario']:
             return jsonify({'error': 'Perfil deve ser: administrador, tecnico ou usuario'}), 400
         
-        # Verifica se o usuário já existe
-        existing_user = User.query.filter_by(username=data['username']).first()
+        # Verifica se o email já existe
+        existing_user = User.query.filter_by(email=data['email']).first()
         if existing_user:
-            return jsonify({'error': 'Nome de usuário já existe'}), 400
+            return jsonify({'error': 'Email já cadastrado'}), 400
         
         # Cria o novo usuário
         new_user = User(
+            email=data["email"],
             username=data["username"],
             profile=data["profile"]
         )
+        
+        # Atribuir o usuário a um cliente (opcional)
+        if data.get('client_id'):
+            new_user.client_id = data.get('client_id')
+        
         new_user.set_password(data["password"])
         
         db.session.add(new_user)
@@ -69,11 +78,14 @@ def update_user(user_id):
         data = request.get_json()
         
         # Atualiza os campos se fornecidos
-        if 'username' in data:
-            # Verifica se o novo username já existe (exceto para o próprio usuário)
-            existing_user = User.query.filter(User.username == data['username'], User.id != user_id).first()
+        if 'email' in data:
+            # Verifica se o novo email já existe (exceto para o próprio usuário)
+            existing_user = User.query.filter(User.email == data['email'], User.id != user_id).first()
             if existing_user:
-                return jsonify({'error': 'Nome de usuário já existe'}), 400
+                return jsonify({'error': 'Email já cadastrado'}), 400
+            user.email = data['email']
+        
+        if 'username' in data:
             user.username = data['username']
         
         if 'profile' in data:
@@ -83,6 +95,9 @@ def update_user(user_id):
         
         if 'password' in data and data['password']:
             user.set_password(data['password'])
+        
+        if 'client_id' in data:
+            user.client_id = data['client_id']  # Permite atribuição ou reatribuição a um cliente
         
         db.session.commit()
         return jsonify(user.to_dict()), 200

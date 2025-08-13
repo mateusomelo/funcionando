@@ -21,12 +21,12 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const formData = new FormData(this);
             const credentials = {
-                username: formData.get('username'),
+                email: formData.get('email'),
                 password: formData.get('password')
             };
             
             // Basic validation
-            if (!credentials.username || !credentials.password) {
+            if (!credentials.email || !credentials.password) {
                 showError('Por favor, preencha todos os campos.');
                 return;
             }
@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     localStorage.setItem('authToken', 'dummy-token');
                     localStorage.setItem('userProfile', data.user.profile);
                     localStorage.setItem('username', data.user.username);
+                    localStorage.setItem('userEmail', data.user.email);
                     
                     // Show dashboard
                     showDashboard(data.user);
@@ -152,6 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.removeItem('authToken');
         localStorage.removeItem('userProfile');
         localStorage.removeItem('username');
+        localStorage.removeItem('userEmail');
         
         // Hide dashboard
         if (dashboardModal) {

@@ -1,14 +1,22 @@
 <form id="userForm" class="form-container">
     <input type="hidden" id="userId" name="id">
+    
     <div class="form-group">
-        <label for="username">Nome de Usuário</label>
-        <input type="text" id="username" name="username" required>
+        <label for="email">Email (Para Login)</label>
+        <input type="email" id="email" name="email" placeholder="exemplo@dominio.com" required>
     </div>
+    
+    <div class="form-group">
+        <label for="username">Nome</label>
+        <input type="text" id="username" name="username" placeholder="Digite o nome do usuário" required>
+    </div>
+    
     <div class="form-group">
         <label for="password">Senha</label>
-        <input type="password" id="password" name="password">
-        <small>Deixe em branco para não alterar a senha.</small>
+        <input type="password" id="password" name="password" placeholder="Digite a senha">
+        <small>Deixe em branco para não alterar a senha (apenas na edição).</small>
     </div>
+    
     <div class="form-group">
         <label for="profile">Perfil</label>
         <select id="profile" name="profile" required>
@@ -17,6 +25,16 @@
             <option value="usuario">Usuário</option>
         </select>
     </div>
+    
+    <div class="form-group">
+        <label for="client_id">Atribuir a Cliente</label>
+        <select id="client_id" name="client_id">
+            <option value="">Nenhum cliente</option>
+            <!-- Clientes serão carregados dinamicamente -->
+        </select>
+        <small>Opcional: Vincule este usuário a um cliente específico.</small>
+    </div>
+    
     <div class="form-actions">
         <button type="submit" class="btn btn-primary">Salvar</button>
         <button type="button" class="btn btn-secondary" id="cancelFormBtn">Cancelar</button>

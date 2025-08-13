@@ -9,16 +9,17 @@ auth_bp = Blueprint('auth', __name__)
 def login():
     try:
         data = request.get_json()
-        username = data.get('username')
+        email = data.get('email')
         password = data.get('password')
         
-        if not username or not password:
-            return jsonify({'error': 'Username e senha são obrigatórios'}), 400
+        if not email or not password:
+            return jsonify({'error': 'Email e senha são obrigatórios'}), 400
         
-        user = User.query.filter_by(username=username).first()
+        user = User.query.filter_by(email=email).first()
         
         if user and user.check_password(password):
             session['user_id'] = user.id
+            session['email'] = user.email
             session['username'] = user.username
             session['profile'] = user.profile
             return jsonify({
@@ -54,23 +55,24 @@ def get_current_user():
 def register():
     try:
         data = request.get_json()
-        username = data.get('username')
+        email = data.get('email')
+        username = data.get('username')  # Nome para exibição
         password = data.get('password')
         profile = data.get('profile', 'usuario')
         
-        if not username or not password:
-            return jsonify({'error': 'Username e senha são obrigatórios'}), 400
+        if not email or not password or not username:
+            return jsonify({'error': 'Email, nome de usuário e senha são obrigatórios'}), 400
         
         if profile not in ['administrador', 'tecnico', 'usuario']:
             return jsonify({'error': 'Perfil inválido'}), 400
         
-        # Verifica se o usuário já existe
-        existing_user = User.query.filter_by(username=username).first()
+        # Verifica se o email já existe
+        existing_user = User.query.filter_by(email=email).first()
         if existing_user:
-            return jsonify({'error': 'Usuário já existe'}), 409
+            return jsonify({'error': 'Email já cadastrado'}), 409
         
         # Cria novo usuário
-        user = User(username=username, profile=profile)
+        user = User(email=email, username=username, profile=profile)
         user.set_password(password)
         
         db.session.add(user)
