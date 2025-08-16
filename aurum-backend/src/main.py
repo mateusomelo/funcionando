@@ -42,13 +42,13 @@ with app.app_context():
     
     # Cria usuários padrão se não existirem
     if User.query.count() == 0:
-        admin = User(username='admin.sistema', profile='administrador')
+        admin = User(username='admin.sistema', email='admin@aurum.com', profile='administrador')
         admin.set_password('admin123')
         
-        tecnico = User(username='joao.silva', profile='tecnico')
+        tecnico = User(username='joao.silva', email='joao@aurum.com', profile='tecnico')
         tecnico.set_password('tecnico123')
         
-        usuario = User(username='maria.santos', profile='usuario')
+        usuario = User(username='maria.santos', email='maria@aurum.com', profile='usuario')
         usuario.set_password('usuario123')
         
         db.session.add(admin)

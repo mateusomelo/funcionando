@@ -13,9 +13,12 @@ def login():
         password = data.get('password')
         
         if not username or not password:
-            return jsonify({'error': 'Username e senha são obrigatórios'}), 400
+            return jsonify({'error': 'Usuário e senha são obrigatórios'}), 400
         
-        user = User.query.filter_by(username=username).first()
+        # Allow login with username or email
+        user = User.query.filter(
+            (User.username == username) | (User.email == username)
+        ).first()
         
         if user and user.check_password(password):
             session['user_id'] = user.id
@@ -55,6 +58,7 @@ def register():
     try:
         data = request.get_json()
         username = data.get('username')
+        email = data.get('email')
         password = data.get('password')
         profile = data.get('profile', 'usuario')
         
@@ -65,12 +69,14 @@ def register():
             return jsonify({'error': 'Perfil inválido'}), 400
         
         # Verifica se o usuário já existe
-        existing_user = User.query.filter_by(username=username).first()
+        existing_user = User.query.filter(
+            (User.username == username) | (User.email == email)
+        ).first()
         if existing_user:
-            return jsonify({'error': 'Usuário já existe'}), 409
+            return jsonify({'error': 'Usuário ou email já existe'}), 409
         
         # Cria novo usuário
-        user = User(username=username, profile=profile)
+        user = User(username=username, email=email, profile=profile)
         user.set_password(password)
         
         db.session.add(user)
