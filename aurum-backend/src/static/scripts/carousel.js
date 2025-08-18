@@ -10,7 +10,7 @@ class ServicesCarousel {
         this.totalCards = 0;
         this.cardsPerView = 3; // Default for desktop
         this.autoSlideInterval = null;
-        this.autoSlideDelay = 4000; // 5 seconds
+        this.autoSlideDelay = 4000; // 4 seconds
         
         this.init();
     }
@@ -273,4 +273,3 @@ if ('IntersectionObserver' in window) {
         }
     });
 }
-

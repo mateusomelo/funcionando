@@ -14,9 +14,10 @@ class Ticket(db.Model):
     priority = db.Column(db.String(50), nullable=False, default='media')  # baixa, media, alta, urgente
     service_type = db.Column(db.String(100), nullable=False)  # consultoria, seguranca, desenvolvimento
     
-    # Relacionamentos simplificados
+    # Relacionamentos
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     assigned_to = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    company_id = db.Column(db.Integer, db.ForeignKey('clients.id'), nullable=False)
     
     # Timestamps
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -26,6 +27,7 @@ class Ticket(db.Model):
     # Relacionamentos com backref
     user = db.relationship('User', foreign_keys=[user_id], backref='tickets')
     assigned_user = db.relationship('User', foreign_keys=[assigned_to], backref='assigned_tickets')
+    company = db.relationship('Client', backref='tickets', lazy=True)
     
     def to_dict(self):
         return {
@@ -39,7 +41,10 @@ class Ticket(db.Model):
             'user_name': self.user.username if self.user else None,
             'assigned_to': self.assigned_to,
             'assigned_user_name': self.assigned_user.username if self.assigned_user else None,
-            'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat(),
-            'closed_at': self.closed_at.isoformat() if self.closed_at else None
+            'company_id': self.company_id,
+            'company_name': self.company.name if self.company else None,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+            'closed_at': self.closed_at.isoformat() if self.closed_at else None,
+            'files': [file.to_dict() for file in self.files] if hasattr(self, 'files') else []
         }

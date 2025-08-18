@@ -1,4 +1,4 @@
-<form id="ticketForm" class="form-container">
+<form id="ticketForm" class="form-container" enctype="multipart/form-data">
     <input type="hidden" id="ticketId" name="id">
     <div class="form-group">
         <label for="ticketTitle">Título do Chamado</label>
@@ -6,12 +6,12 @@
     </div>
     <div class="form-group">
         <label for="ticketDescription">Descrição</label>
-        <textarea id="ticketDescription" name="description" required></textarea>
+        <textarea id="ticketDescription" name="description" required rows="4"></textarea>
     </div>
-    <div class="form-group">
-        <label for="ticketClient">Cliente</label>
-        <select id="ticketClient" name="client_id" required>
-            <!-- Options will be loaded dynamically -->
+    <div class="form-group" id="companySelectGroup">
+        <label for="ticketCompany">Empresa</label>
+        <select id="ticketCompany" name="company_id" required>
+            <!-- Options will be loaded dynamically for admins/techs -->
         </select>
     </div>
     <div class="form-group">
@@ -29,17 +29,123 @@
             <option value="urgente">Urgente</option>
         </select>
     </div>
-    <div class="form-group">
+    <div class="form-group" id="statusGroup" style="display: none;">
         <label for="ticketStatus">Status</label>
-        <select id="ticketStatus" name="status" required>
+        <select id="ticketStatus" name="status">
             <option value="aberto">Aberto</option>
             <option value="em_andamento">Em Andamento</option>
             <option value="fechado">Fechado</option>
         </select>
+    </div>
+    <div class="form-group" id="assignedGroup" style="display: none;">
+        <label for="ticketAssigned">Atribuído para</label>
+        <select id="ticketAssigned" name="assigned_to">
+            <option value="">Ninguém</option>
+            <!-- Options will be loaded dynamically -->
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="ticketFiles">Anexar Arquivos</label>
+        <input type="file" id="ticketFiles" name="files" multiple accept=".txt,.pdf,.png,.jpg,.jpeg,.gif,.doc,.docx,.xls,.xlsx,.zip,.rar">
+        <small>Tipos permitidos: txt, pdf, png, jpg, jpeg, gif, doc, docx, xls, xlsx, zip, rar (máximo 16MB por arquivo)</small>
+        <div id="fileList" class="file-list"></div>
     </div>
     <div class="form-actions">
         <button type="submit" class="btn btn-primary">Salvar</button>
         <button type="button" class="btn btn-secondary" id="cancelFormBtn">Cancelar</button>
     </div>
 </form>
+
+<style>
+.file-list {
+    margin-top: 10px;
+}
+
+.file-item {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 5px 0;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.file-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.file-name {
+    font-weight: bold;
+}
+
+.file-size {
+    font-size: 0.8em;
+    color: #666;
+}
+
+.file-remove {
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 0.8em;
+}
+
+.file-remove:hover {
+    background: #cc0000;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('ticketFiles');
+    const fileList = document.getElementById('fileList');
+    let selectedFiles = [];
+
+    fileInput.addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        selectedFiles = [...selectedFiles, ...files];
+        updateFileList();
+    });
+
+    function updateFileList() {
+        fileList.innerHTML = '';
+        selectedFiles.forEach((file, index) => {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.innerHTML = `
+                <div class="file-info">
+                    <span class="file-name">${file.name}</span>
+                    <span class="file-size">${formatFileSize(file.size)}</span>
+                </div>
+                <button type="button" class="file-remove" onclick="removeFile(${index})">Remover</button>
+            `;
+            fileList.appendChild(fileItem);
+        });
+        
+        // Update file input
+        const dt = new DataTransfer();
+        selectedFiles.forEach(file => dt.items.add(file));
+        fileInput.files = dt.files;
+    }
+
+    window.removeFile = function(index) {
+        selectedFiles.splice(index, 1);
+        updateFileList();
+    };
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+});
+</script>
 

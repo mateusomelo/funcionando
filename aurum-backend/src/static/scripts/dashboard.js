@@ -148,10 +148,15 @@ function displayTickets(tickets) {
                 <span class="ticket-status status-${ticket.status}">${getStatusLabel(ticket.status)}</span>
             </div>
             <div class="ticket-info">
-                <p><strong>Cliente:</strong> ${ticket.client_name || "N/A"}</p>
-                <p><strong>Serviço:</strong> ${ticket.service_type_name || "N/A"}</p>
+                <p><strong>Empresa:</strong> ${ticket.company_name || "N/A"}</p>
+                <p><strong>Usuário:</strong> ${ticket.user_name || "N/A"}</p>
+                <p><strong>Serviço:</strong> ${ticket.service_type || "N/A"}</p>
                 <p><strong>Prioridade:</strong> ${getPriorityLabel(ticket.priority)}</p>
                 <p><strong>Criado em:</strong> ${formatDate(ticket.created_at)}</p>
+                ${ticket.files && ticket.files.length > 0 ? 
+                    `<p><strong>Arquivos:</strong> ${ticket.files.length} anexo(s)</p>` : 
+                    ''
+                }
             </div>
             <div class="ticket-actions">
                 <button onclick="viewTicket(${ticket.id})" class="btn-secondary">Ver</button>
@@ -195,7 +200,10 @@ function displayUsers(users) {
         <div class="user-card" data-user-id="${user.id}">
             <div class="user-info">
                 <h4>${user.username}</h4>
+                <p><strong>Email:</strong> ${user.email || "N/A"}</p>
+                <p><strong>Empresa:</strong> ${user.company_name || "N/A"}</p>
                 <span class="user-profile profile-${user.profile}">${getProfileLabel(user.profile)}</span>
+                ${user.is_responsible ? '<span class="user-responsible">👑 Responsável</span>' : ''}
             </div>
             <div class="user-actions">
                 <button onclick="editUser(${user.id})" class="btn-primary">Editar</button>
@@ -254,7 +262,7 @@ function displayClients(clients) {
 // Load service types
 async function loadServiceTypes() {
     try {
-        const response = await apiRequest("/api/service_types");
+        const response = await apiRequest("/api/service-types");
         if (response.ok) {
             const data = await response.json();
             displayServiceTypes(data.service_types || data);
@@ -422,10 +430,16 @@ async function createUser() {
     const form = await loadForm("/forms/user_form.html", "Criar Novo Usuário");
     if (!form) return;
 
+    // Carregar empresas no dropdown
+    await populateCompanyDropdown(form.querySelector("#company_id"));
+
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const formData = new FormData(form);
         const userData = Object.fromEntries(formData.entries());
+        
+        // Converter checkbox para boolean
+        userData.is_responsible = form.querySelector("#is_responsible").checked;
 
         try {
             const response = await apiRequest("/api/users", { method: "POST", body: JSON.stringify(userData) });
@@ -453,10 +467,21 @@ async function editUser(userId) {
         const form = await loadForm("/forms/user_form.html", "Editar Usuário", userData);
         if (!form) return;
 
+        // Carregar empresas no dropdown
+        await populateCompanyDropdown(form.querySelector("#company_id"), userData.company_id);
+        
+        // Definir checkbox
+        if (userData.is_responsible) {
+            form.querySelector("#is_responsible").checked = true;
+        }
+
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
             const formData = new FormData(form);
             const updatedUserData = Object.fromEntries(formData.entries());
+            
+            // Converter checkbox para boolean
+            updatedUserData.is_responsible = form.querySelector("#is_responsible").checked;
 
             try {
                 const updateResponse = await apiRequest(`/api/users/${userId}`, { method: "PUT", body: JSON.stringify(updatedUserData) });
@@ -588,7 +613,7 @@ async function createServiceType() {
         const serviceTypeData = Object.fromEntries(formData.entries());
 
         try {
-            const response = await apiRequest("/api/service_types", { method: "POST", body: JSON.stringify(serviceTypeData) });
+            const response = await apiRequest("/api/service-types", { method: "POST", body: JSON.stringify(serviceTypeData) });
             if (response.ok) {
                 showSuccess("Tipo de serviço criado com sucesso!");
                 hideFormModal();
@@ -606,7 +631,7 @@ async function createServiceType() {
 
 async function editServiceType(serviceTypeId) {
     try {
-        const response = await apiRequest(`/api/service_types/${serviceTypeId}`);
+        const response = await apiRequest(`/api/service-types/${serviceTypeId}`);
         if (!response.ok) throw new Error("Tipo de serviço não encontrado.");
         const serviceTypeData = await response.json();
 
@@ -619,7 +644,7 @@ async function editServiceType(serviceTypeId) {
             const updatedServiceTypeData = Object.fromEntries(formData.entries());
 
             try {
-                const updateResponse = await apiRequest(`/api/service_types/${serviceTypeId}`, { method: "PUT", body: JSON.stringify(updatedServiceTypeData) });
+                const updateResponse = await apiRequest(`/api/service-types/${serviceTypeId}`, { method: "PUT", body: JSON.stringify(updatedServiceTypeData) });
                 if (updateResponse.ok) {
                     showSuccess("Tipo de serviço atualizado com sucesso!");
                     hideFormModal();
@@ -642,7 +667,7 @@ async function editServiceType(serviceTypeId) {
 async function deleteServiceType(serviceTypeId) {
     if (confirm("Tem certeza que deseja excluir este tipo de serviço?")) {
         try {
-            const response = await apiRequest(`/api/service_types/${serviceTypeId}`, { method: "DELETE" });
+            const response = await apiRequest(`/api/service-types/${serviceTypeId}`, { method: "DELETE" });
             if (response.ok) {
                 showSuccess("Tipo de serviço excluído com sucesso!");
                 loadServiceTypes();
@@ -662,21 +687,20 @@ async function createTicket() {
     const form = await loadForm("/forms/ticket_form.html", "Criar Novo Chamado");
     if (!form) return;
 
-    // Load clients and service types for dropdowns
-    await populateClientDropdown(form.querySelector("#ticketClient"));
+    // Load companies and service types for dropdowns
+    await populateCompanyDropdown(form.querySelector("#ticketCompany"));
     await populateServiceTypeDropdown(form.querySelector("#ticketServiceType"));
 
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const formData = new FormData(form);
-        const ticketData = Object.fromEntries(formData.entries());
-
-        // Convert client_id and service_type_id to integers
-        ticketData.client_id = parseInt(ticketData.client_id);
-        ticketData.service_type_id = parseInt(ticketData.service_type_id);
 
         try {
-            const response = await apiRequest("/api/tickets", { method: "POST", body: JSON.stringify(ticketData) });
+            const response = await fetch("/api/tickets", {
+                method: "POST",
+                body: formData
+            });
+            
             if (response.ok) {
                 showSuccess("Chamado criado com sucesso!");
                 hideFormModal();
@@ -817,28 +841,33 @@ async function viewTicket(ticketId) {
     }
 }
 
-// Helper to populate client dropdown
-async function populateClientDropdown(selectElement, selectedId = null) {
+// Helper to populate company dropdown
+async function populateCompanyDropdown(selectElement, selectedId = null) {
     try {
         const response = await apiRequest("/api/clients");
         if (response.ok) {
-            const clients = await response.json();
-            selectElement.innerHTML = 
-                clients.map(client => `<option value="${client.id}">${client.name}</option>`).join("");
+            const companies = await response.json();
+            selectElement.innerHTML = '<option value="">Selecione uma empresa...</option>' +
+                companies.map(company => `<option value="${company.id}">${company.name}</option>`).join("");
             if (selectedId) {
                 selectElement.value = selectedId;
             }
         }
     } catch (error) {
-        console.error("Error populating clients:", error);
-        showError("Erro ao carregar clientes para o formulário.");
+        console.error("Error populating companies:", error);
+        showError("Erro ao carregar empresas para o formulário.");
     }
+}
+
+// Helper to populate client dropdown (mantém compatibilidade)
+async function populateClientDropdown(selectElement, selectedId = null) {
+    return populateCompanyDropdown(selectElement, selectedId);
 }
 
 // Helper to populate service type dropdown
 async function populateServiceTypeDropdown(selectElement, selectedId = null) {
     try {
-        const response = await apiRequest("/api/service_types");
+        const response = await apiRequest("/api/service-types");
         if (response.ok) {
             const serviceTypes = await response.json();
             selectElement.innerHTML = 

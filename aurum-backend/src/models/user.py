@@ -10,6 +10,11 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=True)
     password_hash = db.Column(db.String(128), nullable=False)
     profile = db.Column(db.String(50), nullable=False, default='usuario')
+    company_id = db.Column(db.Integer, db.ForeignKey('clients.id'), nullable=True)
+    is_responsible = db.Column(db.Boolean, default=False, nullable=False)
+    
+    # Relacionamento com empresa
+    company = db.relationship('Client', backref='users', lazy=True)
 
     def __repr__(self):
         return f'<User {self.username}>'
@@ -25,6 +30,9 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
             'email': self.email,
-            'profile': self.profile
+            'profile': self.profile,
+            'company_id': self.company_id,
+            'company_name': self.company.name if self.company else None,
+            'is_responsible': self.is_responsible
         }
 

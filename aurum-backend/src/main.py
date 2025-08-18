@@ -10,6 +10,7 @@ from src.models.client import Client
 from src.models.service_type import ServiceType
 from src.models.ticket import Ticket
 from src.models.ticket_response import TicketResponse
+from src.models.ticket_file import TicketFile
 from src.routes.user import user_bp
 from src.routes.auth import auth_bp
 from src.routes.tickets import tickets_bp

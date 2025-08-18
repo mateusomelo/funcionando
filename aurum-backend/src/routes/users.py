@@ -34,15 +34,28 @@ def create_user():
         if not data.get('profile') or data.get('profile') not in ['administrador', 'tecnico', 'usuario']:
             return jsonify({'error': 'Perfil deve ser: administrador, tecnico ou usuario'}), 400
         
+        # Para usuários não-admin, company_id é obrigatório
+        if data.get('profile') == 'usuario' and not data.get('company_id'):
+            return jsonify({'error': 'Empresa é obrigatória para usuários'}), 400
+        
         # Verifica se o usuário já existe
         existing_user = User.query.filter_by(username=data['username']).first()
         if existing_user:
             return jsonify({'error': 'Nome de usuário já existe'}), 400
         
+        # Verifica se o email já existe (se fornecido)
+        if data.get('email'):
+            existing_email = User.query.filter_by(email=data['email']).first()
+            if existing_email:
+                return jsonify({'error': 'Email já está em uso'}), 400
+        
         # Cria o novo usuário
         new_user = User(
             username=data["username"],
-            profile=data["profile"]
+            email=data.get("email"),
+            profile=data["profile"],
+            company_id=data.get("company_id"),
+            is_responsible=data.get("is_responsible", False)
         )
         new_user.set_password(data["password"])
         
@@ -76,10 +89,24 @@ def update_user(user_id):
                 return jsonify({'error': 'Nome de usuário já existe'}), 400
             user.username = data['username']
         
+        if 'email' in data:
+            # Verifica se o novo email já existe (exceto para o próprio usuário)
+            if data['email']:
+                existing_email = User.query.filter(User.email == data['email'], User.id != user_id).first()
+                if existing_email:
+                    return jsonify({'error': 'Email já está em uso'}), 400
+            user.email = data['email']
+        
         if 'profile' in data:
             if data['profile'] not in ['administrador', 'tecnico', 'usuario']:
                 return jsonify({'error': 'Perfil deve ser: administrador, tecnico ou usuario'}), 400
             user.profile = data['profile']
+        
+        if 'company_id' in data:
+            user.company_id = data['company_id']
+        
+        if 'is_responsible' in data:
+            user.is_responsible = data['is_responsible']
         
         if 'password' in data and data['password']:
             user.set_password(data['password'])

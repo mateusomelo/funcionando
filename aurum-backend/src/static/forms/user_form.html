@@ -5,21 +5,62 @@
         <input type="text" id="username" name="username" required>
     </div>
     <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email">
+    </div>
+    <div class="form-group">
         <label for="password">Senha</label>
         <input type="password" id="password" name="password">
         <small>Deixe em branco para não alterar a senha.</small>
     </div>
     <div class="form-group">
         <label for="profile">Perfil</label>
-        <select id="profile" name="profile" required>
+        <select id="profile" name="profile" required onchange="toggleCompanyFields()">
             <option value="administrador">Administrador</option>
             <option value="tecnico">Técnico</option>
             <option value="usuario">Usuário</option>
         </select>
+    </div>
+    <div class="form-group" id="companyGroup">
+        <label for="company_id">Empresa *</label>
+        <select id="company_id" name="company_id">
+            <option value="">Selecione uma empresa...</option>
+        </select>
+    </div>
+    <div class="form-group" id="responsibleGroup">
+        <label>
+            <input type="checkbox" id="is_responsible" name="is_responsible" value="true">
+            Usuário Responsável pela Empresa
+        </label>
+        <small>Usuários responsáveis podem visualizar todos os chamados da empresa</small>
     </div>
     <div class="form-actions">
         <button type="submit" class="btn btn-primary">Salvar</button>
         <button type="button" class="btn btn-secondary" id="cancelFormBtn">Cancelar</button>
     </div>
 </form>
+
+<script>
+function toggleCompanyFields() {
+    const profile = document.getElementById('profile').value;
+    const companyGroup = document.getElementById('companyGroup');
+    const responsibleGroup = document.getElementById('responsibleGroup');
+    const companySelect = document.getElementById('company_id');
+    
+    if (profile === 'usuario') {
+        companyGroup.style.display = 'block';
+        responsibleGroup.style.display = 'block';
+        companySelect.required = true;
+    } else {
+        companyGroup.style.display = 'none';
+        responsibleGroup.style.display = 'none';
+        companySelect.required = false;
+    }
+}
+
+// Chama a função quando o formulário carrega
+document.addEventListener('DOMContentLoaded', function() {
+    toggleCompanyFields();
+});
+</script>
 
